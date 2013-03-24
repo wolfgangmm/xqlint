@@ -413,12 +413,17 @@ ItemType ::= KindTest
            | FunctionTest
            | AtomicOrUnionType
            | ParenthesizedItemType
+           | MapType
            | JSONTest
            | StructuredItemTest
 JSONTest ::= 
           JSONItemTest
         | JSONObjectTest
         | JSONArrayTest
+
+MapType ::= 'map' '(' ( '*' | (AtomicOrUnionType ',' SequenceType) ) ')'
+
+MapExpr ::= 'map' '{' ( ExprSingle ":=" ExprSingle ( "," ExprSingle ":=" ExprSingle )* )? '}'
 
 StructuredItemTest ::= "structured-item" "(" ")"
 
@@ -653,6 +658,7 @@ EQName   ::= FunctionName
            | 'function'
            | 'if'
            | 'item'
+           | 'map'
            | 'namespace-node'
            | 'node'
            | 'processing-instruction'
@@ -848,6 +854,7 @@ NCName   ::= NCName^Token
            | 'insert'
            | 'item'
            | 'last'
+           | 'map'
            | 'module'
            | 'namespace'
            | 'namespace-node'
@@ -1021,6 +1028,7 @@ PrimaryExpr
            | UnorderedExpr
            | Constructor
            | FunctionItemExpr
+           | MapExpr
            | BlockExpr
            | ObjectConstructor
            | ArrayConstructor
@@ -1147,7 +1155,7 @@ NonNCNameChar
               'import' 'in' 'index' 'infinity' 'inherit' 'insensitive'
               'insert' 'instance' 'integrity' 'intersect' 'into' 'is'
               'item' 'json' 'json-item' 'key' 'language' 'last' 'lax'
-              'le' 'least' 'let' 'levels' 'loop' 'lowercase' 'lt'
+              'le' 'least' 'let' 'levels' 'loop' 'lowercase' 'lt' 'map'
               'minus-sign' 'mod' 'modify' 'module' 'most' 'namespace'
               'namespace-node' 'ne' 'next' 'no' 'no-inherit'
               'no-preserve' 'node' 'nodes' 'not' 'object' 'occurs'
@@ -1169,9 +1177,9 @@ NonNCNameChar
               'without' 'word' 'words' 'xquery' 'zero-digit'
 '*'       << Wildcard '*'^OccurrenceIndicator
 EQName^Token
-          << 'after' 'ancestor' 'ancestor-or-self' 'and' 'as' 'ascending' 'attribute' 'before' 'case' 'cast' 'castable' 'child' 'collation' 'comment' 'copy' 'count' 'declare' 'default' 'delete' 'descendant' 'descendant-or-self' 'descending' 'div' 'document' 'document-node' 'element' 'else' 'empty' 'empty-sequence' 'end' 'eq' 'every' 'except' 'first' 'following' 'following-sibling' 'for' 'function' 'ge' 'group' 'gt' 'idiv' 'if' 'import' 'insert' 'instance' 'intersect' 'into' 'is' 'item' 'last' 'le' 'let' 'lt' 'mod' 'modify' 'module' 'namespace' 'namespace-node' 'ne' 'node' 'only' 'or' 'order' 'ordered' 'parent' 'preceding' 'preceding-sibling' 'processing-instruction' 'rename' 'replace' 'return' 'satisfies' 'schema-attribute' 'schema-element' 'self' 'some' 'stable' 'start' 'switch' 'text' 'to' 'treat' 'try' 'typeswitch' 'union' 'unordered' 'validate' 'where' 'with' 'xquery' 'contains' 'paragraphs' 'sentences' 'times' 'words' 'by' 'collection' 'allowing' 'at' 'base-uri' 'boundary-space' 'break' 'catch' 'construction' 'context' 'continue' 'copy-namespaces' 'decimal-format' 'encoding' 'exit' 'external' 'ft-option' 'in' 'index' 'integrity' 'lax' 'nodes' 'option' 'ordering' 'revalidation' 'schema' 'score' 'sliding' 'strict' 'tumbling' 'type' 'updating' 'value' 'variable' 'version' 'while' 'constraint' 'loop' 'returning' 'append' 'array' 'json-item' 'object' 'structured-item'
+          << 'after' 'ancestor' 'ancestor-or-self' 'and' 'as' 'ascending' 'attribute' 'before' 'case' 'cast' 'castable' 'child' 'collation' 'comment' 'copy' 'count' 'declare' 'default' 'delete' 'descendant' 'descendant-or-self' 'descending' 'div' 'document' 'document-node' 'element' 'else' 'empty' 'empty-sequence' 'end' 'eq' 'every' 'except' 'first' 'following' 'following-sibling' 'for' 'function' 'ge' 'group' 'gt' 'idiv' 'if' 'import' 'insert' 'instance' 'intersect' 'into' 'is' 'item' 'last' 'le' 'let' 'lt' 'mod' 'modify' 'map' 'module' 'namespace' 'namespace-node' 'ne' 'node' 'only' 'or' 'order' 'ordered' 'parent' 'preceding' 'preceding-sibling' 'processing-instruction' 'rename' 'replace' 'return' 'satisfies' 'schema-attribute' 'schema-element' 'self' 'some' 'stable' 'start' 'switch' 'text' 'to' 'treat' 'try' 'typeswitch' 'union' 'unordered' 'validate' 'where' 'with' 'xquery' 'contains' 'paragraphs' 'sentences' 'times' 'words' 'by' 'collection' 'allowing' 'at' 'base-uri' 'boundary-space' 'break' 'catch' 'construction' 'context' 'continue' 'copy-namespaces' 'decimal-format' 'encoding' 'exit' 'external' 'ft-option' 'in' 'index' 'integrity' 'lax' 'nodes' 'option' 'ordering' 'revalidation' 'schema' 'score' 'sliding' 'strict' 'tumbling' 'type' 'updating' 'value' 'variable' 'version' 'while' 'constraint' 'loop' 'returning' 'append' 'array' 'json-item' 'object' 'structured-item'
 NCName^Token
-          << 'after' 'and' 'as' 'ascending' 'before' 'case' 'cast' 'castable' 'collation' 'count' 'default' 'descending' 'div' 'else' 'empty' 'end' 'eq' 'except' 'for' 'ge' 'group' 'gt' 'idiv' 'instance' 'intersect' 'into' 'is' 'le' 'let' 'lt' 'mod' 'modify' 'ne' 'only' 'or' 'order' 'return' 'satisfies' 'stable' 'start' 'to' 'treat' 'union' 'where' 'with' 'contains' 'paragraphs' 'sentences' 'times' 'words' 'by' 'ancestor' 'ancestor-or-self' 'attribute' 'child' 'comment' 'copy' 'declare' 'delete' 'descendant' 'descendant-or-self' 'document' 'document-node' 'element' 'empty-sequence' 'every' 'first' 'following' 'following-sibling' 'function' 'if' 'import' 'insert' 'item' 'last' 'module' 'namespace' 'namespace-node' 'node' 'ordered' 'parent' 'preceding' 'preceding-sibling' 'processing-instruction' 'rename' 'replace' 'schema-attribute' 'schema-element' 'self' 'some' 'switch' 'text' 'try' 'typeswitch' 'unordered' 'validate' 'variable' 'xquery' 'allowing' 'at' 'base-uri' 'boundary-space' 'break' 'catch' 'construction' 'context' 'continue' 'copy-namespaces' 'decimal-format' 'encoding' 'exit' 'external' 'ft-option' 'in' 'index' 'integrity' 'lax' 'nodes' 'option' 'ordering' 'revalidation' 'schema' 'score' 'sliding' 'strict' 'tumbling' 'type' 'updating' 'value' 'version' 'while' 'constraint' 'loop' 'returning'
+          << 'after' 'and' 'as' 'ascending' 'before' 'case' 'cast' 'castable' 'collation' 'count' 'default' 'descending' 'div' 'else' 'empty' 'end' 'eq' 'except' 'for' 'ge' 'group' 'gt' 'idiv' 'instance' 'intersect' 'into' 'is' 'le' 'let' 'lt' 'mod' 'modify' 'ne' 'only' 'or' 'order' 'return' 'satisfies' 'stable' 'start' 'to' 'treat' 'union' 'where' 'with' 'contains' 'paragraphs' 'sentences' 'times' 'words' 'by' 'ancestor' 'ancestor-or-self' 'attribute' 'child' 'comment' 'copy' 'declare' 'delete' 'descendant' 'descendant-or-self' 'document' 'document-node' 'element' 'empty-sequence' 'every' 'first' 'following' 'following-sibling' 'function' 'if' 'import' 'insert' 'item' 'last' 'map' 'module' 'namespace' 'namespace-node' 'node' 'ordered' 'parent' 'preceding' 'preceding-sibling' 'processing-instruction' 'rename' 'replace' 'schema-attribute' 'schema-element' 'self' 'some' 'switch' 'text' 'try' 'typeswitch' 'unordered' 'validate' 'variable' 'xquery' 'allowing' 'at' 'base-uri' 'boundary-space' 'break' 'catch' 'construction' 'context' 'continue' 'copy-namespaces' 'decimal-format' 'encoding' 'exit' 'external' 'ft-option' 'in' 'index' 'integrity' 'lax' 'nodes' 'option' 'ordering' 'revalidation' 'schema' 'score' 'sliding' 'strict' 'tumbling' 'type' 'updating' 'value' 'version' 'while' 'constraint' 'loop' 'returning'
 
 <?ENCORE?>
 
