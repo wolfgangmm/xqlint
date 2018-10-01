@@ -239,7 +239,9 @@ TreatExpr
          ::= CastableExpr ( 'treat' 'as' SequenceType )?
 CastableExpr
          ::= CastExpr ( 'castable' 'as' SingleType )?
-CastExpr ::= UnaryExpr ( 'cast' 'as' SingleType )?
+CastExpr ::= ArrowExpr ( 'cast' 'as' SingleType )?
+ArrowExpr
+         ::= UnaryExpr ( '=>' ArrowFunctionSpecifier ArgumentList )*
 UnaryExpr
          ::= ( '-' | '+' )* ValueExpr
 ValueExpr
@@ -311,13 +313,14 @@ NodeTest ::= KindTest
 NameTest ::= EQName
            | Wildcard
 PostfixExpr
-         ::= PrimaryExpr ( Predicate | ArgumentList )*
+         ::= PrimaryExpr ( Predicate | ArgumentList | Lookup )*
 ArgumentList
          ::= '(' ( Argument ( ',' Argument )* )? ')'
 PredicateList
          ::= Predicate*
 Predicate
          ::= '[' Expr ']'
+Lookup   ::= '?' KeySpecifier
 Literal  ::= NumericLiteral
            | StringLiteral
 NumericLiteral
@@ -414,6 +417,7 @@ ItemType ::= KindTest
            | AtomicOrUnionType
            | ParenthesizedItemType
            | MapType
+           | ArrayType
            | JSONTest
            | StructuredItemTest
 JSONTest ::= 
@@ -423,7 +427,7 @@ JSONTest ::=
 
 MapType ::= 'map' '(' ( '*' | (AtomicOrUnionType ',' SequenceType) ) ')'
 
-MapExpr ::= 'map' '{' ( ExprSingle ":=" ExprSingle ( "," ExprSingle ":=" ExprSingle )* )? '}'
+ArrayType ::= 'array' '(' '*' ')'
 
 StructuredItemTest ::= "structured-item" "(" ")"
 
@@ -1018,6 +1022,15 @@ CompCommentConstructor
          ::= 'comment' BlockExpr
 CompTextConstructor
          ::= 'text' BlockExpr
+KeySpecifier
+         ::= NCName
+           | IntegerLiteral
+           | ParenthesizedExpr
+           | '*'
+ArrowFunctionSpecifier
+         ::= EQName
+           | VarRef
+           | ParenthesizedExpr
 PrimaryExpr
          ::= Literal
            | VarRef
@@ -1028,10 +1041,12 @@ PrimaryExpr
            | UnorderedExpr
            | Constructor
            | FunctionItemExpr
-           | MapExpr
            | BlockExpr
            | ObjectConstructor
+           | MapConstructor
            | ArrayConstructor
+           | StringConstructor
+           | UnaryLookup
            | JSONSimpleObjectUnion
 
 JSONSimpleObjectUnion
@@ -1042,7 +1057,32 @@ ObjectConstructor ::=  "{" ( PairConstructor ("," PairConstructor)* )? "}"
       
 PairConstructor ::=  ExprSingle ":" ExprSingle
       
-ArrayConstructor ::=  "[" Expr? "]"
+MapConstructor
+         ::= 'map' '{' ( MapConstructorEntry ( ',' MapConstructorEntry )* )? '}'
+MapConstructorEntry
+         ::= MapKeyExpr ':' MapValueExpr
+MapKeyExpr
+         ::= ExprSingle
+MapValueExpr
+         ::= ExprSingle
+ArrayConstructor
+         ::= SquareArrayConstructor
+           | CurlyArrayConstructor
+SquareArrayConstructor
+         ::= '[' ( ExprSingle ( ',' ExprSingle )* )? ']'
+CurlyArrayConstructor
+         ::= 'array' EnclosedExpr
+StringConstructor
+         ::= '``[' StringConstructorContent ']``'
+          /* ws: explicit */
+StringConstructorContent
+         ::= StringConstructorChars ( StringConstructorInterpolation StringConstructorChars )*
+          /* ws: explicit */
+StringConstructorInterpolation
+         ::= '`{' Expr? '}`'
+
+UnaryLookup
+         ::= '?' KeySpecifier
       
 BlockExpr
          ::= '{' StatementsAndOptionalExpr '}'
@@ -1116,6 +1156,9 @@ UnprefixedName
 Prefix   ::= NCName
 LocalPart
          ::= NCName
+StringConstructorChars
+         ::= ( Char* - ( Char* ( '`{' | ']``' ) Char* ) ) &( '`{' | ']`' )
+          /* ws: explicit */
 S        ::= [#x0009#x000A#x000D#x0020]+
 CharRef  ::= '&#' [0-9]+ ';'
            | '&#x' [0-9A-Fa-f]+ ';'
