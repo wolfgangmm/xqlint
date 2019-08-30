@@ -423,7 +423,7 @@ JSONTest ::=
 
 MapType ::= 'map' '(' ( '*' | (AtomicOrUnionType ',' SequenceType) ) ')'
 
-MapExpr ::= 'map' '{' ( ExprSingle ":=" ExprSingle ( "," ExprSingle ":=" ExprSingle )* )? '}'
+MapExpr ::= 'map' '{' ( ExprSingle ":" ExprSingle ( "," ExprSingle ":" ExprSingle )* )? '}'
 
 StructuredItemTest ::= "structured-item" "(" ")"
 
